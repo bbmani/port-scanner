@@ -7,6 +7,15 @@ import socket
 # Regular Expression
 import re
 
+# Threading
+from concurrent.futures import ThreadPoolExecutor
+
+# Datetime
+from datetime import datetime
+
+# Floor function
+import math
+
 def is_IPv4(ip_address):
     '''
         @input: IP Address 
@@ -41,22 +50,19 @@ def get_target():
         print("Invalid Amount of Arguments. Refer the README for syntax")
         sys.exit()
 
-def port_scanner(target):
+def port_scanner(target, port):
     '''
         @input: Target IP address
-        
-        @output: Ports open in the Target Machine
+        @output: None
+        @return: Return true if the port is open
     '''
-    print(f"---------- Scanning Target : {target} ----------")
     try:
-        for port in range(1, 100):
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket.setdefaulttimeout(1)
-            result = s.connect_ex((target, port))
-            if result == 0:
-                print(f"Port {port} is open")
-            s.close() 
-
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.setdefaulttimeout(1)
+        result = s.connect_ex((target, port))
+        if result == 0:
+            return True
+        s.close()
     except KeyboardInterrupt:
         print("\nExiting Program (Clean Exit).")
         sys.exit()
@@ -69,10 +75,30 @@ def port_scanner(target):
         print("Couldn't connect to server.")
         sys.exit()
 
+def executor(host, ports):
+    '''
+        @input: Target, Ports [ List ]
+        @output: Ports that are open
+        Using ThreadPoolExecutor Function to Run Faster
+    '''
+    print(f"---------- Scanning Target : {host} ----------")
+    
+    start_time = datetime.now()
+    with ThreadPoolExecutor(len(ports)) as e:
+        res = e.map(port_scanner, [host]*len(ports), ports)
+        for port, isOpen in zip(ports, res):
+            if isOpen:
+                print(f"Port {port} is Open")
+    end_time = datetime.now()
+    
+    print(f"\n\nTotal Time : {math.floor((end_time - start_time).total_seconds())}")
+    
+
 # MAIN FUNCTION
 def main():
     target = get_target()
-    port_scanner(target)
+    ports = range(1, 65536)
+    executor(target, ports)
         
 if __name__ == "__main__" : 
     main()

@@ -72,17 +72,17 @@ def executor(host, ports):
         @output: Ports that are open
         Using ThreadPoolExecutor Function to Run Faster
     '''
-    print(f"Scanning Target : {host}\n\n")
+    print(f"Scanning Target : {host}")
     
     start_time = datetime.now()
     with ThreadPoolExecutor(len(ports)) as e:
         res = e.map(port_scanner, [host]*len(ports), ports)
-        for port, isOpen in zip(ports, res):
+        for port, isOpen in enumerate(res):
             if isOpen:
-                print(f"Port {port} is Open")
+                print(f"Port {port+1} is Open")
     end_time = datetime.now()
     
-    print(f"\n\nTotal Time : {math.floor((end_time - start_time).total_seconds())}")
+    print(f"Total Time : {math.floor((end_time - start_time).total_seconds())}")
     
 
 # MAIN FUNCTION

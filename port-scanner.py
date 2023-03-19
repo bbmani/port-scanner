@@ -62,17 +62,9 @@ def port_scanner(target, port):
         result = s.connect_ex((target, port))
         if result==0: return True
         s.close()
-    except KeyboardInterrupt:
-        print("\nExiting Program (Clean Exit).")
-        sys.exit()
-
-    except socket.gaierror:
-        print("Host name cannot be resolved.")
-        sys.exit()
-
-    except socket.error:
-        print("Couldn't connect to server.")
-        sys.exit()
+    except:
+        # If there was a hostname resolution error or server connection error, this one statement will be able to handle it. 
+        return False
 
 def executor(host, ports):
     '''

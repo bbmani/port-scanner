@@ -60,8 +60,7 @@ def port_scanner(target, port):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket.setdefaulttimeout(1)
         result = s.connect_ex((target, port))
-        if result == 0:
-            return True
+        if result==0: return True
         s.close()
     except KeyboardInterrupt:
         print("\nExiting Program (Clean Exit).")
@@ -81,7 +80,7 @@ def executor(host, ports):
         @output: Ports that are open
         Using ThreadPoolExecutor Function to Run Faster
     '''
-    print(f"---------- Scanning Target : {host} ----------")
+    print(f"Scanning Target : {host}\n\n")
     
     start_time = datetime.now()
     with ThreadPoolExecutor(len(ports)) as e:
@@ -96,8 +95,7 @@ def executor(host, ports):
 
 # MAIN FUNCTION
 def main():
-    target = get_target()
-    ports = range(1, 65536)
+    target, ports = get_target(), range(1, 65536)
     executor(target, ports)
         
 if __name__ == "__main__" : 
